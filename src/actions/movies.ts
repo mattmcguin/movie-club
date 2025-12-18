@@ -91,6 +91,45 @@ export async function addMovie(formData: FormData) {
 export async function deleteMovie(movieId: string) {
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  // Check if movie exists and is not currently being watched
+  const { data: movie, error: movieError } = await supabase
+    .from("movies")
+    .select("id, is_current")
+    .eq("id", movieId)
+    .single();
+
+  if (movieError || !movie) {
+    return { error: "Movie not found" };
+  }
+
+  if (movie.is_current) {
+    return { error: "Cannot delete the currently watching movie" };
+  }
+
+  // Check if movie has any reviews
+  const { data: ratings, error: ratingsError } = await supabase
+    .from("movie_ratings")
+    .select("id")
+    .eq("movie_id", movieId)
+    .eq("watched", true)
+    .limit(1);
+
+  if (ratingsError) {
+    return { error: "Failed to check reviews" };
+  }
+
+  if (ratings && ratings.length > 0) {
+    return { error: "Cannot delete a movie that has reviews" };
+  }
+
   const { error } = await supabase.from("movies").delete().eq("id", movieId);
 
   if (error) {

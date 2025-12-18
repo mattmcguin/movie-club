@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import { ReviewDialog } from "@/components/review-dialog";
 import { MovieInfoDialog } from "@/components/movie-info-dialog";
-import { setCurrentMovie, clearCurrentMovie } from "@/actions/movies";
+import { setCurrentMovie, clearCurrentMovie, deleteMovie } from "@/actions/movies";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,6 +65,21 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
       }
     });
   };
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      const result = await deleteMovie(movie.id);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`"${movie.title}" deleted`);
+      }
+    });
+  };
+
+  // Can delete if not current and has no reviews
+  const hasReviews = movie.ratings.some((r) => r.watched);
+  const canDelete = !movie.is_current && !hasReviews;
 
   return (
     <div className={`bg-zinc-900/80 border rounded-xl overflow-hidden ${
@@ -128,6 +143,16 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
                   >
                     <PlayCircleIcon className="mr-2 h-4 w-4" />
                     Set as currently watching
+                  </DropdownMenuItem>
+                )}
+                {canDelete && (
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    disabled={isPending}
+                    className="text-red-400 focus:text-red-300 focus:bg-red-950/50"
+                  >
+                    <TrashIcon className="mr-2 h-4 w-4" />
+                    Delete movie
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -315,6 +340,16 @@ function LockIcon({ className }: { className?: string }) {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function TrashIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 6h18" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
     </svg>
   );
 }
