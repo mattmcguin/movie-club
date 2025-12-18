@@ -17,11 +17,14 @@ export async function signInWithMagicLink(formData: FormData) {
   const headersList = await headers();
   const origin = headersList.get("origin") || "";
 
+  // For new users without a display name, use email prefix as fallback
+  const effectiveDisplayName = displayName?.trim() || email.split("@")[0];
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
-      data: displayName ? { display_name: displayName } : undefined,
+      data: { display_name: effectiveDisplayName },
     },
   });
 

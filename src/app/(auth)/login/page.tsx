@@ -80,7 +80,7 @@ function FormFields() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="displayName" className="text-zinc-300">
-          Display Name <span className="text-zinc-500 text-xs">(optional)</span>
+          Display Name
         </Label>
         <Input
           id="displayName"
@@ -91,6 +91,9 @@ function FormFields() {
           autoComplete="name"
           className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
         />
+        <p className="text-xs text-zinc-500">
+          New user? Enter your name. Existing user? Leave blank.
+        </p>
       </div>
     </>
   );
