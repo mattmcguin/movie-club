@@ -31,6 +31,13 @@ interface MovieTableProps {
 }
 
 export function MovieTable({ movies, profiles, currentUserId }: MovieTableProps) {
+  // Sort profiles so current user is always first
+  const sortedProfiles = [...profiles].sort((a, b) => {
+    if (a.id === currentUserId) return -1;
+    if (b.id === currentUserId) return 1;
+    return 0;
+  });
+
   if (movies.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center px-4">
@@ -67,7 +74,7 @@ export function MovieTable({ movies, profiles, currentUserId }: MovieTableProps)
               <th className="sticky left-0 z-10 bg-zinc-950 p-4 text-left font-medium text-zinc-400 min-w-[320px]">
                 Movie
               </th>
-              {profiles.map((profile) => (
+              {sortedProfiles.map((profile) => (
                 <th
                   key={profile.id}
                   className="p-4 text-center font-medium text-zinc-400 min-w-[120px]"
@@ -99,7 +106,7 @@ export function MovieTable({ movies, profiles, currentUserId }: MovieTableProps)
               <MovieRow
                 key={movie.id}
                 movie={movie}
-                profiles={profiles}
+                profiles={sortedProfiles}
                 currentUserId={currentUserId}
               />
             ))}
