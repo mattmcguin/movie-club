@@ -2,8 +2,10 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import type { Profile } from "@/lib/types/database";
+
+// Use environment variable or fall back to production domain
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://navajomovietalkers.com";
 
 export async function signInWithMagicLink(formData: FormData) {
   const email = formData.get("email") as string;
@@ -14,8 +16,6 @@ export async function signInWithMagicLink(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const headersList = await headers();
-  const origin = headersList.get("origin") || "";
 
   // For new users without a display name, use email prefix as fallback
   const effectiveDisplayName = displayName?.trim() || email.split("@")[0];
@@ -23,7 +23,7 @@ export async function signInWithMagicLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: `${SITE_URL}/auth/callback`,
       data: { display_name: effectiveDisplayName },
     },
   });
