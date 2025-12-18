@@ -10,16 +10,18 @@ const PRECACHE_ASSETS = [
   "/icon-512.png",
 ];
 
-// Install event - cache app shell
+// Install event - cache app shell and skip waiting
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(PRECACHE_ASSETS);
     })
   );
+  // Take over immediately
+  self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and claim clients
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -30,6 +32,8 @@ self.addEventListener("activate", (event) => {
       );
     })
   );
+  // Take control of all clients immediately
+  self.clients.claim();
 });
 
 // Fetch event - network first, fallback to cache
@@ -73,11 +77,3 @@ self.addEventListener("fetch", (event) => {
       })
   );
 });
-
-// Listen for skip waiting message from the client
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
-
