@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import Image from "next/image";
 import { MovieCard } from "@/components/movie-card";
 import { ReviewDialog } from "@/components/review-dialog";
+import { MovieInfoDialog } from "@/components/movie-info-dialog";
 import { setCurrentMovie, clearCurrentMovie } from "@/actions/movies";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -153,68 +154,75 @@ function MovieRow({
       <td className="sticky left-0 z-10 bg-zinc-950 p-4">
         <div className="flex items-start gap-3">
           {movie.poster_url ? (
-            <div className="relative h-20 w-14 flex-shrink-0 overflow-hidden rounded-md bg-zinc-800">
-              <Image
-                src={movie.poster_url}
-                alt={movie.title}
-                fill
-                className="object-cover"
-                sizes="56px"
-              />
-            </div>
+            <MovieInfoDialog movie={movie}>
+              <button className="relative h-20 w-14 flex-shrink-0 overflow-hidden rounded-md bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+                <Image
+                  src={movie.poster_url}
+                  alt={movie.title}
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                />
+              </button>
+            </MovieInfoDialog>
           ) : (
-            <div className="flex h-20 w-14 flex-shrink-0 items-center justify-center rounded-md bg-zinc-800">
-              <FilmIcon className="h-6 w-6 text-zinc-600" />
-            </div>
+            <MovieInfoDialog movie={movie}>
+              <button className="flex h-20 w-14 flex-shrink-0 items-center justify-center rounded-md bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+                <FilmIcon className="h-6 w-6 text-zinc-600" />
+              </button>
+            </MovieInfoDialog>
           )}
-          <div className="flex flex-col gap-1 flex-1">
-            <div className="flex items-start gap-2">
-              <h3 className="font-semibold text-zinc-100 line-clamp-2">
-                {movie.title}
-              </h3>
-              {movie.is_current && (
-                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 text-[10px] flex-shrink-0">
-                  Now Watching
-                </Badge>
-              )}
+          <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-2 min-w-0 flex-1">
+                <h3 className="font-semibold text-zinc-100 line-clamp-1">
+                  {movie.title}
+                </h3>
+                {movie.is_current && (
+                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 text-[10px] flex-shrink-0">
+                    Now Watching
+                  </Badge>
+                )}
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-zinc-500 hover:text-zinc-300 flex-shrink-0">
+                    <MoreIcon className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-700">
+                  {movie.is_current ? (
+                    <DropdownMenuItem
+                      onClick={handleClearCurrent}
+                      disabled={isPending}
+                      className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800"
+                    >
+                      <XIcon className="mr-2 h-4 w-4" />
+                      Remove from current
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={handleSetCurrent}
+                      disabled={isPending}
+                      className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800"
+                    >
+                      <PlayCircleIcon className="mr-2 h-4 w-4" />
+                      Set as currently watching
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             {movie.year && (
               <span className="text-sm text-zinc-500">{movie.year}</span>
             )}
             {movie.description && (
-              <p className="text-xs text-zinc-500 line-clamp-2 max-w-[220px]">
-                {movie.description}
-              </p>
+              <MovieInfoDialog movie={movie}>
+                <p className="text-xs text-zinc-500 line-clamp-2 max-w-[220px] cursor-pointer hover:text-zinc-400 transition-colors text-left">
+                  {movie.description}
+                </p>
+              </MovieInfoDialog>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="w-fit h-6 px-2 text-xs text-zinc-500 hover:text-zinc-300 mt-1">
-                  <MoreIcon className="h-3 w-3 mr-1" />
-                  Options
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="bg-zinc-900 border-zinc-700">
-                {movie.is_current ? (
-                  <DropdownMenuItem
-                    onClick={handleClearCurrent}
-                    disabled={isPending}
-                    className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800"
-                  >
-                    <XIcon className="mr-2 h-4 w-4" />
-                    Remove from current
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem
-                    onClick={handleSetCurrent}
-                    disabled={isPending}
-                    className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800"
-                  >
-                    <PlayCircleIcon className="mr-2 h-4 w-4" />
-                    Set as currently watching
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </td>

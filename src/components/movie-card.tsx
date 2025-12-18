@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import { ReviewDialog } from "@/components/review-dialog";
+import { MovieInfoDialog } from "@/components/movie-info-dialog";
 import { setCurrentMovie, clearCurrentMovie } from "@/actions/movies";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -78,26 +79,30 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
 
       {/* Movie Info Section */}
       <div className="flex gap-4 p-4">
-        {movie.poster_url ? (
-          <div className="relative h-32 w-22 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-800">
-            <Image
-              src={movie.poster_url}
-              alt={movie.title}
-              fill
-              className="object-cover"
-              sizes="88px"
-            />
-          </div>
-        ) : (
-          <div className="flex h-32 w-22 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-800">
-            <FilmIcon className="h-8 w-8 text-zinc-600" />
-          </div>
-        )}
+        <MovieInfoDialog movie={movie}>
+          {movie.poster_url ? (
+            <button className="relative h-32 w-22 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+              <Image
+                src={movie.poster_url}
+                alt={movie.title}
+                fill
+                className="object-cover"
+                sizes="88px"
+              />
+            </button>
+          ) : (
+            <button className="flex h-32 w-22 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+              <FilmIcon className="h-8 w-8 text-zinc-600" />
+            </button>
+          )}
+        </MovieInfoDialog>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-zinc-100 text-lg leading-tight">
-              {movie.title}
-            </h3>
+            <MovieInfoDialog movie={movie}>
+              <h3 className="font-semibold text-zinc-100 text-lg leading-tight cursor-pointer hover:text-amber-400 transition-colors text-left">
+                {movie.title}
+              </h3>
+            </MovieInfoDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-zinc-500 hover:text-zinc-300">
@@ -131,9 +136,11 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
             <span className="text-sm text-zinc-500">{movie.year}</span>
           )}
           {movie.description && (
-            <p className="text-sm text-zinc-400 line-clamp-2 mt-2">
-              {movie.description}
-            </p>
+            <MovieInfoDialog movie={movie}>
+              <p className="text-sm text-zinc-400 line-clamp-2 mt-2 cursor-pointer hover:text-zinc-300 transition-colors text-left">
+                {movie.description}
+              </p>
+            </MovieInfoDialog>
           )}
           {othersWatched > 0 && (
             <div className="mt-2 flex items-center gap-1 text-xs text-zinc-500">
