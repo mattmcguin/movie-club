@@ -131,5 +131,6 @@ export type MovieRating = Database["public"]["Tables"]["movie_ratings"]["Row"];
 // Extended types for the UI
 export type MovieWithRatings = Movie & {
   ratings: (MovieRating & { profile: Profile })[];
+  added_by_profile: Profile;
 };
 

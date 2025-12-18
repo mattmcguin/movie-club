@@ -20,6 +20,7 @@ import type { Profile, Movie, MovieRating } from "@/lib/types/database";
 
 type MovieWithRatings = Movie & {
   ratings: (MovieRating & { profile: Profile })[];
+  added_by_profile: Profile;
 };
 
 interface MovieCardProps {
@@ -117,6 +118,9 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
             <MovieInfoDialog movie={movie}>
               <h3 className="font-semibold text-zinc-100 text-lg leading-tight cursor-pointer hover:text-amber-400 transition-colors text-left">
                 {movie.title}
+                {movie.year && (
+                  <span className="text-zinc-500 font-normal ml-1">({movie.year})</span>
+                )}
               </h3>
             </MovieInfoDialog>
             <DropdownMenu>
@@ -158,9 +162,9 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          {movie.year && (
-            <span className="text-sm text-zinc-500">{movie.year}</span>
-          )}
+          <span className="text-xs text-zinc-500">
+            Added by {movie.added_by_profile?.display_name ?? "Unknown"}
+          </span>
           {movie.description && (
             <MovieInfoDialog movie={movie}>
               <p className="text-sm text-zinc-400 line-clamp-2 mt-2 cursor-pointer hover:text-zinc-300 transition-colors text-left">

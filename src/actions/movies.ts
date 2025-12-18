@@ -6,6 +6,7 @@ import type { Profile, Movie, MovieRating } from "@/lib/types/database";
 
 type MovieWithRatings = Movie & {
   ratings: (MovieRating & { profile: Profile })[];
+  added_by_profile: Profile;
 };
 
 export async function getMoviesWithRatings(): Promise<MovieWithRatings[]> {
@@ -16,6 +17,7 @@ export async function getMoviesWithRatings(): Promise<MovieWithRatings[]> {
     .select(
       `
       *,
+      added_by_profile:profiles!movies_added_by_fkey(*),
       ratings:movie_ratings(
         *,
         profile:profiles(*)

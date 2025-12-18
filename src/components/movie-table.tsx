@@ -21,6 +21,7 @@ import type { Profile, Movie, MovieRating } from "@/lib/types/database";
 
 type MovieWithRatings = Movie & {
   ratings: (MovieRating & { profile: Profile })[];
+  added_by_profile: Profile;
 };
 
 interface MovieTableProps {
@@ -193,12 +194,17 @@ function MovieRow({
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-start gap-2 min-w-0 flex-1">
-                <h3 className="font-semibold text-zinc-100 line-clamp-1">
-                  {movie.title}
-                  {movie.year && (
-                    <span className="text-zinc-500 font-normal ml-1">({movie.year})</span>
-                  )}
-                </h3>
+                <div className="flex flex-col gap-0.5">
+                  <h3 className="font-semibold text-zinc-100 line-clamp-1">
+                    {movie.title}
+                    {movie.year && (
+                      <span className="text-zinc-500 font-normal ml-1">({movie.year})</span>
+                    )}
+                  </h3>
+                  <span className="text-[11px] text-zinc-500">
+                    Added by {movie.added_by_profile?.display_name ?? "Unknown"}
+                  </span>
+                </div>
                 {movie.is_current && (
                   <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 text-[10px] flex-shrink-0">
                     Now Watching
