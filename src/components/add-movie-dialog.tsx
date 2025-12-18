@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { addMovie } from "@/actions/movies";
 import { getPosterUrl, getYear } from "@/lib/tmdb";
@@ -38,13 +38,16 @@ export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
   const [manualPosterUrl, setManualPosterUrl] = useState("");
   const [manualDescription, setManualDescription] = useState("");
 
-  const handleSearch = useCallback(async () => {
-    if (!searchQuery.trim()) return;
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
 
     setIsSearching(true);
     try {
       const response = await fetch(
-        `/api/tmdb?query=${encodeURIComponent(searchQuery)}`
+        `/api/tmdb?query=${encodeURIComponent(query)}`
       );
       const data: TMDBSearchResponse = await response.json();
       setSearchResults(data.results?.slice(0, 10) ?? []);
@@ -54,7 +57,21 @@ export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
     } finally {
       setIsSearching(false);
     }
-  }, [searchQuery]);
+  }, []);
+
+  // Debounced auto-search: triggers 500ms after user stops typing
+  useEffect(() => {
+    if (!searchQuery.trim() || selectedMovie) {
+      setSearchResults([]);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedMovie, handleSearch]);
 
   const handleSelectMovie = (movie: TMDBMovie) => {
     setSelectedMovie(movie);
@@ -166,21 +183,18 @@ export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
           <div className="space-y-4">
             {/* Search Input */}
             {!selectedMovie && (
-              <div className="flex gap-2">
+              <div className="relative">
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  placeholder="Search for a movie..."
-                  className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
+                  placeholder="Start typing to search..."
+                  className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 pr-10"
                 />
-                <Button
-                  onClick={handleSearch}
-                  disabled={isSearching || !searchQuery.trim()}
-                  className="bg-zinc-700 hover:bg-zinc-600"
-                >
-                  {isSearching ? <LoadingSpinner /> : <SearchIcon className="h-4 w-4" />}
-                </Button>
+                {isSearching && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <LoadingSpinner />
+                  </div>
+                )}
               </div>
             )}
 
