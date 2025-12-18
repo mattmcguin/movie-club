@@ -230,7 +230,7 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
           ) : (
             <div className="p-4 text-sm text-zinc-500 flex items-center gap-2">
               <LockIcon className="h-4 w-4" />
-              <span>Submit your review to see what others think</span>
+              <span>Review to see others</span>
             </div>
           )}
         </div>
