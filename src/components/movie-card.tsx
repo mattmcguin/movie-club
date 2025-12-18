@@ -78,7 +78,7 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
   };
 
   // Can delete if not current and has no reviews
-  const hasReviews = movie.ratings.some((r) => r.watched);
+  const hasReviews = (movie.ratings ?? []).some((r) => r.watched);
   const canDelete = !movie.is_current && !hasReviews;
 
   return (

@@ -160,7 +160,7 @@ function MovieRow({
   };
 
   // Can delete if not current and has no reviews
-  const hasReviews = movie.ratings.some((r) => r.watched);
+  const hasReviews = (movie.ratings ?? []).some((r) => r.watched);
   const canDelete = !movie.is_current && !hasReviews;
 
   return (
