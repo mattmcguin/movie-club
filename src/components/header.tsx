@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { signOut } from "@/actions/auth";
+import { AddMovieDialog } from "@/components/add-movie-dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -15,9 +16,10 @@ import type { Profile } from "@/lib/types/database";
 
 interface HeaderProps {
   profile: Profile | null;
+  showAddMovie?: boolean;
 }
 
-export function Header({ profile }: HeaderProps) {
+export function Header({ profile, showAddMovie = false }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-14 md:h-16 items-center justify-between px-4">
@@ -25,10 +27,19 @@ export function Header({ profile }: HeaderProps) {
           <div className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
             <FilmIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
           </div>
-          <span className="text-base md:text-lg font-bold text-zinc-100">Navajo Movie Talkers</span>
+          <span className="text-base md:text-lg font-bold text-zinc-100 hidden sm:inline">Navajo Movie Talkers</span>
+          <span className="text-base font-bold text-zinc-100 sm:hidden">NMT</span>
         </Link>
 
-        {profile && (
+        <div className="flex items-center gap-2">
+          {/* Mobile Add Movie Button */}
+          {showAddMovie && (
+            <div className="md:hidden">
+              <AddMovieDialog compact />
+            </div>
+          )}
+
+          {profile && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -61,7 +72,8 @@ export function Header({ profile }: HeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )}
+          )}
+        </div>
       </div>
     </header>
   );

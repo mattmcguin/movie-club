@@ -47,7 +47,7 @@ export function MovieTable({ movies, profiles, currentUserId }: MovieTableProps)
   return (
     <>
       {/* Mobile: Card Layout */}
-      <div className="md:hidden space-y-4 p-4">
+      <div className="md:hidden space-y-3 px-4 py-2">
         {movies.map((movie) => (
           <MovieCard
             key={movie.id}

@@ -35,9 +35,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-zinc-950">
-      <Header profile={profile} />
+      <Header profile={profile} showAddMovie />
 
-      <main className="container mx-auto px-4 py-6 md:py-8 pb-24 md:pb-8">
+        <main className="container mx-auto px-4 py-6 md:py-8">
         <div className="mb-6 md:mb-8 flex items-start md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-zinc-100">Movies</h1>
@@ -51,7 +51,8 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+        {/* Container: only visible on desktop */}
+        <div className="md:rounded-xl md:border md:border-zinc-800 md:bg-zinc-900/50 overflow-hidden -mx-4 md:mx-0">
           <MovieTable
             movies={movies as MovieWithRatings[]}
             profiles={profiles}
@@ -59,11 +60,6 @@ export default async function HomePage() {
           />
         </div>
       </main>
-
-      {/* Mobile: Fixed bottom button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-zinc-950 via-zinc-950 to-transparent md:hidden">
-        <AddMovieDialog fullWidth />
-      </div>
     </div>
   );
 }

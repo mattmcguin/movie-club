@@ -21,9 +21,10 @@ import { toast } from "sonner";
 
 interface AddMovieDialogProps {
   fullWidth?: boolean;
+  compact?: boolean;
 }
 
-export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
+export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieDialogProps) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"search" | "manual">("search");
   const [searchQuery, setSearchQuery] = useState("");
@@ -144,10 +145,10 @@ export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
       <DialogTrigger asChild>
         <Button 
           className={`bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white ${
-            fullWidth ? "w-full h-12 text-base" : ""
+            fullWidth ? "w-full h-12 text-base" : compact ? "h-9 px-3 text-sm" : ""
           }`}
         >
-          <PlusIcon className={`mr-2 ${fullWidth ? "h-5 w-5" : "h-4 w-4"}`} />
+          <PlusIcon className={`mr-1.5 ${fullWidth ? "h-5 w-5" : "h-4 w-4"}`} />
           Add Movie
         </Button>
       </DialogTrigger>
