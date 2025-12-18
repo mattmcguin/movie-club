@@ -1,5 +1,5 @@
 // Service Worker for Navajo Movie Talkers PWA
-const CACHE_NAME = "nmt-cache-v1";
+const CACHE_NAME = "nmt-cache-v2";
 
 // Assets to cache on install (app shell)
 const PRECACHE_ASSETS = [
