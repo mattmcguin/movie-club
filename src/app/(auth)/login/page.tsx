@@ -57,8 +57,9 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@example.com"
                 required
+                disabled={isLoading}
                 autoComplete="email"
-                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
+                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
               />
             </div>
             <div className="space-y-2">
@@ -71,8 +72,9 @@ export default function LoginPage() {
                 name="displayName"
                 type="text"
                 placeholder="Your name"
+                disabled={isLoading}
                 autoComplete="name"
-                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
+                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
               />
             </div>
             {error && (
