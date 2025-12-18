@@ -1,14 +1,31 @@
 "use client";
 
-import { useState, useRef, useCallback, useTransition, type ReactNode } from "react";
+import { useState, useRef, useCallback, useTransition, useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 interface PullToRefreshProps {
   children: ReactNode;
 }
 
+function useIsPWA(): boolean {
+  const [isPWA, setIsPWA] = useState(false);
+
+  useEffect(() => {
+    // Check if running as installed PWA
+    const isStandalone = 
+      window.matchMedia("(display-mode: standalone)").matches ||
+      // iOS Safari specific
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    
+    setIsPWA(isStandalone);
+  }, []);
+
+  return isPWA;
+}
+
 export function PullToRefresh({ children }: PullToRefreshProps) {
   const router = useRouter();
+  const isPWA = useIsPWA();
   const [isPending, startTransition] = useTransition();
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -19,14 +36,15 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
   const MAX_PULL = 120;
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (isRefreshing || isPending) return;
+    // Only enable in PWA mode
+    if (!isPWA || isRefreshing || isPending) return;
 
     // Only start pull if page is scrolled to top
     if (window.scrollY <= 0) {
       startYRef.current = e.touches[0].clientY;
       isPullingRef.current = true;
     }
-  }, [isRefreshing, isPending]);
+  }, [isPWA, isRefreshing, isPending]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isPullingRef.current || isRefreshing || isPending) return;
@@ -75,7 +93,7 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
   }, [pullDistance, isRefreshing, isPending, router]);
 
   const progress = Math.min(pullDistance / PULL_THRESHOLD, 1);
-  const showIndicator = pullDistance > 10 || isRefreshing || isPending;
+  const showIndicator = isPWA && (pullDistance > 10 || isRefreshing || isPending);
 
   return (
     <div
@@ -84,41 +102,42 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Pull indicator - fixed to appear from under the header */}
-      <div
-        className="fixed left-0 right-0 flex items-end justify-center pointer-events-none z-40 transition-opacity duration-200"
-        style={{
-          top: 0,
-          height: 56 + pullDistance, // 56px = mobile header height (h-14)
-          paddingTop: 56,
-          opacity: showIndicator ? 1 : 0,
-        }}
-      >
+      {/* Pull indicator - fixed position below header (PWA only) */}
+      {isPWA && (
         <div
-          className={`flex items-center justify-center rounded-full bg-zinc-800 border border-zinc-700 ${
-            isRefreshing || isPending ? "animate-pulse" : ""
-          }`}
+          className="fixed left-1/2 -translate-x-1/2 pointer-events-none z-50 transition-all duration-200"
           style={{
-            width: 36,
-            height: 36,
-            transform: `rotate(${progress * 360}deg)`,
-            transition: isRefreshing ? "none" : "transform 0.1s ease-out",
+            top: 56 + 16, // header height + padding
+            opacity: showIndicator ? 1 : 0,
+            transform: `translateX(-50%) scale(${showIndicator ? 1 : 0.5})`,
           }}
         >
-          {isRefreshing || isPending ? (
-            <SpinnerIcon className="h-5 w-5 text-amber-400 animate-spin" />
-          ) : (
-            <ArrowDownIcon
-              className="h-5 w-5 text-zinc-400"
-              style={{
-                opacity: progress,
-                transform: `rotate(${progress >= 1 ? 180 : 0}deg)`,
-                transition: "transform 0.2s ease-out",
-              }}
-            />
-          )}
+          <div
+            className={`flex items-center justify-center rounded-full bg-zinc-800 border border-zinc-700 shadow-lg ${
+              isRefreshing || isPending ? "" : ""
+            }`}
+            style={{
+              width: 40,
+              height: 40,
+              transform: `rotate(${progress * 360}deg)`,
+              transition: isRefreshing ? "none" : "transform 0.1s ease-out",
+            }}
+          >
+            {isRefreshing || isPending ? (
+              <SpinnerIcon className="h-5 w-5 text-amber-400 animate-spin" />
+            ) : (
+              <ArrowDownIcon
+                className="h-5 w-5 text-zinc-400"
+                style={{
+                  opacity: progress,
+                  transform: `rotate(${progress >= 1 ? 180 : 0}deg)`,
+                  transition: "transform 0.2s ease-out",
+                }}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Content */}
       {children}
