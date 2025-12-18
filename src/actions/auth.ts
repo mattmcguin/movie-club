@@ -35,6 +35,69 @@ export async function signInWithMagicLink(formData: FormData) {
   redirect("/verify");
 }
 
+export async function sendPhoneOtp(phone: string, displayName: string | null) {
+  if (!phone) {
+    return { error: "Phone number is required" };
+  }
+
+  // Normalize phone number - strip non-digits, then format
+  const digits = phone.replace(/\D/g, "");
+  let normalizedPhone: string;
+  
+  if (digits.length === 10) {
+    // US number without country code
+    normalizedPhone = `+1${digits}`;
+  } else if (digits.length === 11 && digits.startsWith("1")) {
+    // US number with country code but no +
+    normalizedPhone = `+${digits}`;
+  } else {
+    // Assume it's already properly formatted or international
+    normalizedPhone = `+${digits}`;
+  }
+
+  console.log("[Phone Auth] Sending OTP to:", normalizedPhone);
+
+  const supabase = await createClient();
+
+  // For new users without a display name, use phone as fallback
+  const effectiveDisplayName = displayName?.trim() || normalizedPhone;
+
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone: normalizedPhone,
+    options: {
+      data: { display_name: effectiveDisplayName },
+    },
+  });
+
+  console.log("[Phone Auth] Supabase response:", { data, error });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true, phone: normalizedPhone };
+}
+
+export async function verifyPhoneOtp(phone: string, code: string) {
+  if (!phone || !code) {
+    return { error: "Phone and code are required" };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.verifyOtp({
+    phone,
+    token: code,
+    type: "sms",
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/");
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();

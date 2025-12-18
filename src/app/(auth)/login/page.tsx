@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useState, useTransition } from "react";
 import Image from "next/image";
-import { signInWithMagicLink } from "@/actions/auth";
+import { sendPhoneOtp, verifyPhoneOtp } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,17 +14,46 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+type Step = "phone" | "code";
+
 export default function LoginPage() {
+  const [step, setStep] = useState<Step>("phone");
+  const [phone, setPhone] = useState("");
+  const [normalizedPhone, setNormalizedPhone] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(formData: FormData) {
+  const handleSendCode = () => {
     setError(null);
-    const result = await signInWithMagicLink(formData);
+    startTransition(async () => {
+      const result = await sendPhoneOtp(phone, displayName || null);
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success && result.phone) {
+        setNormalizedPhone(result.phone);
+        setStep("code");
+      }
+    });
+  };
 
-    if (result?.error) {
-      setError(result.error);
-    }
-  }
+  const handleVerifyCode = () => {
+    setError(null);
+    startTransition(async () => {
+      const result = await verifyPhoneOtp(normalizedPhone, code);
+      if (result?.error) {
+        setError(result.error);
+      }
+      // On success, the action redirects to /
+    });
+  };
+
+  const handleBack = () => {
+    setStep("phone");
+    setCode("");
+    setError(null);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
@@ -44,87 +72,122 @@ export default function LoginPage() {
             Navajo Movie Talkers
           </CardTitle>
           <CardDescription className="text-zinc-400">
-            A Film Discussion Club - Sign in below
+            {step === "phone" 
+              ? "A Film Discussion Club - Sign in below" 
+              : "Enter the code sent to your phone"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={handleSubmit} className="space-y-4">
-            <FormFields />
-            {error && (
-              <p className="text-sm text-red-400 bg-red-950/50 border border-red-900 rounded-md p-3">
-                {error}
-              </p>
-            )}
-            <SubmitButton />
-          </form>
+          {step === "phone" ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-zinc-300">
+                  Phone Number
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  disabled={isPending}
+                  autoComplete="tel"
+                  className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="displayName" className="text-zinc-300">
+                  Display Name
+                </Label>
+                <Input
+                  id="displayName"
+                  type="text"
+                  placeholder="Your name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  disabled={isPending}
+                  autoComplete="name"
+                  className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
+                />
+                <p className="text-xs text-zinc-500">
+                  New user? Enter your name. Existing user? Leave blank.
+                </p>
+              </div>
+              {error && (
+                <p className="text-sm text-red-400 bg-red-950/50 border border-red-900 rounded-md p-3">
+                  {error}
+                </p>
+              )}
+              <Button
+                onClick={handleSendCode}
+                disabled={isPending || !phone}
+                className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium disabled:opacity-50"
+              >
+                {isPending ? (
+                  <span className="flex items-center gap-2">
+                    <LoadingSpinner />
+                    Sending code...
+                  </span>
+                ) : (
+                  "Send Code"
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="code" className="text-zinc-300">
+                  Verification Code
+                </Label>
+                <Input
+                  id="code"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="123456"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  disabled={isPending}
+                  autoComplete="one-time-code"
+                  className="h-14 text-center text-2xl tracking-[0.5em] font-mono bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 placeholder:tracking-[0.5em] focus-visible:ring-amber-500 disabled:opacity-50"
+                />
+                <p className="text-xs text-zinc-500 text-center">
+                  Sent to {normalizedPhone}
+                </p>
+              </div>
+              {error && (
+                <p className="text-sm text-red-400 bg-red-950/50 border border-red-900 rounded-md p-3">
+                  {error}
+                </p>
+              )}
+              <Button
+                onClick={handleVerifyCode}
+                disabled={isPending || code.length !== 6}
+                className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium disabled:opacity-50"
+              >
+                {isPending ? (
+                  <span className="flex items-center gap-2">
+                    <LoadingSpinner />
+                    Verifying...
+                  </span>
+                ) : (
+                  "Verify & Sign In"
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                disabled={isPending}
+                className="w-full h-10 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
+              >
+                ← Use a different number
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-
-function FormFields() {
-  const { pending } = useFormStatus();
-
-  return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-zinc-300">
-          Email
-        </Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          required
-          disabled={pending}
-          autoComplete="email"
-          className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="displayName" className="text-zinc-300">
-          Display Name
-        </Label>
-        <Input
-          id="displayName"
-          name="displayName"
-          type="text"
-          placeholder="Your name"
-          disabled={pending}
-          autoComplete="name"
-          className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
-        />
-        <p className="text-xs text-zinc-500">
-          New user? Enter your name. Existing user? Leave blank.
-        </p>
-      </div>
-    </>
-  );
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium disabled:opacity-50"
-      disabled={pending}
-    >
-      {pending ? (
-        <span className="flex items-center gap-2">
-          <LoadingSpinner />
-          Sending magic link...
-        </span>
-      ) : (
-        "Send Magic Link"
-      )}
-    </Button>
-  );
-}
-
 
 function LoadingSpinner() {
   return (
