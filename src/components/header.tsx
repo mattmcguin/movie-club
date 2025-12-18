@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "@/actions/auth";
 import { AddMovieDialog } from "@/components/add-movie-dialog";
 import { Button } from "@/components/ui/button";
@@ -24,9 +25,13 @@ export function Header({ profile, showAddMovie = false }: HeaderProps) {
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-14 md:h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 md:gap-3">
-          <div className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
-            <FilmIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="NMT Logo"
+            width={36}
+            height={36}
+            className="h-8 w-8 md:h-9 md:w-9 rounded-lg"
+          />
           <span className="text-base md:text-lg font-bold text-zinc-100 hidden sm:inline">Navajo Movie Talkers</span>
           <span className="text-base font-bold text-zinc-100 sm:hidden">NMT</span>
         </Link>
@@ -86,30 +91,6 @@ function getInitials(name: string): string {
     .join("")
     .toUpperCase()
     .slice(0, 2);
-}
-
-function FilmIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-      <path d="M7 3v18" />
-      <path d="M3 7.5h4" />
-      <path d="M3 12h18" />
-      <path d="M3 16.5h4" />
-      <path d="M17 3v18" />
-      <path d="M17 7.5h4" />
-      <path d="M17 16.5h4" />
-    </svg>
-  );
 }
 
 function LogOutIcon({ className }: { className?: string }) {

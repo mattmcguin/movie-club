@@ -14,24 +14,37 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Navajo Movie Talkers",
+  title: "Navajo Movie Talkers",
   description: "A Film Discussion Club - Track and rate movies together",
-  metadataBase: new URL("https://movie-club-red.vercel.app"),
+  metadataBase: new URL("https://navajomovietalkers.com"),
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "NMT",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
-    title: "The Navajo Movie Talkers",
+    title: "Navajo Movie Talkers",
     description: "A Film Discussion Club - Track and rate movies together",
     images: [
       {
         url: "/og-image.jpg",
         width: 1512,
         height: 816,
-        alt: "The Navajo Movie Talkers - A Film Discussion Club",
+        alt: "Navajo Movie Talkers - A Film Discussion Club",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Navajo Movie Talkers",
+    title: "Navajo Movie Talkers",
     description: "A Film Discussion Club - Track and rate movies together",
     images: ["/og-image.jpg"],
   },
@@ -44,6 +57,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <meta name="theme-color" content="#f59e0b" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="NMT" />
+      </head>
       <body
         className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} font-sans antialiased`}
       >

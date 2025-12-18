@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import Image from "next/image";
 import { signInWithMagicLink } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,9 +33,13 @@ export default function LoginPage() {
       
       <Card className="w-full max-w-md relative bg-zinc-900/80 border-zinc-800 backdrop-blur-sm mx-4 sm:mx-0">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600">
-            <FilmIcon className="h-8 w-8 text-white" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Navajo Movie Talkers Logo"
+            width={80}
+            height={80}
+            className="mx-auto mb-4 h-20 w-20 rounded-full"
+          />
           <CardTitle className="text-2xl font-bold tracking-tight text-zinc-100">
             Navajo Movie Talkers
           </CardTitle>
@@ -120,29 +125,6 @@ function SubmitButton() {
   );
 }
 
-function FilmIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-      <path d="M7 3v18" />
-      <path d="M3 7.5h4" />
-      <path d="M3 12h18" />
-      <path d="M3 16.5h4" />
-      <path d="M17 3v18" />
-      <path d="M17 7.5h4" />
-      <path d="M17 16.5h4" />
-    </svg>
-  );
-}
 
 function LoadingSpinner() {
   return (
