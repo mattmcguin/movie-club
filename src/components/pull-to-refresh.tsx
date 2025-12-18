@@ -12,7 +12,6 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
   const [isPending, startTransition] = useTransition();
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const startYRef = useRef(0);
   const isPullingRef = useRef(false);
 
@@ -20,11 +19,10 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
   const MAX_PULL = 120;
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const container = containerRef.current;
-    if (!container || isRefreshing || isPending) return;
+    if (isRefreshing || isPending) return;
 
-    // Only start pull if at top of scroll
-    if (container.scrollTop === 0) {
+    // Only start pull if page is scrolled to top
+    if (window.scrollY <= 0) {
       startYRef.current = e.touches[0].clientY;
       isPullingRef.current = true;
     }
@@ -32,6 +30,13 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isPullingRef.current || isRefreshing || isPending) return;
+
+    // Cancel pull if user scrolled down
+    if (window.scrollY > 0) {
+      isPullingRef.current = false;
+      setPullDistance(0);
+      return;
+    }
 
     const currentY = e.touches[0].clientY;
     const delta = currentY - startYRef.current;
@@ -41,6 +46,10 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
       const resistance = 0.4;
       const distance = Math.min(delta * resistance, MAX_PULL);
       setPullDistance(distance);
+    } else {
+      // User is scrolling up, cancel pull
+      isPullingRef.current = false;
+      setPullDistance(0);
     }
   }, [isRefreshing, isPending]);
 
@@ -70,8 +79,7 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
 
   return (
     <div
-      ref={containerRef}
-      className="relative h-full overflow-y-auto overscroll-y-contain"
+      className="relative"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -112,15 +120,8 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
         </div>
       </div>
 
-      {/* Content with pull offset */}
-      <div
-        style={{
-          transform: `translateY(${pullDistance}px)`,
-          transition: isPullingRef.current ? "none" : "transform 0.2s ease-out",
-        }}
-      >
-        {children}
-      </div>
+      {/* Content */}
+      {children}
     </div>
   );
 }
