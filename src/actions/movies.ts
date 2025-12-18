@@ -22,6 +22,7 @@ export async function getMoviesWithRatings(): Promise<MovieWithRatings[]> {
       )
     `
     )
+    .order("is_current", { ascending: false })
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -94,6 +95,57 @@ export async function deleteMovie(movieId: string) {
 
   if (error) {
     console.error("Error deleting movie:", error);
+    return { error: error.message };
+  }
+
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function setCurrentMovie(movieId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  // Set this movie as current (trigger will unset others)
+  const { error } = await supabase
+    .from("movies")
+    .update({ is_current: true })
+    .eq("id", movieId);
+
+  if (error) {
+    console.error("Error setting current movie:", error);
+    return { error: error.message };
+  }
+
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function clearCurrentMovie(movieId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("movies")
+    .update({ is_current: false })
+    .eq("id", movieId);
+
+  if (error) {
+    console.error("Error clearing current movie:", error);
     return { error: error.message };
   }
 

@@ -40,6 +40,7 @@ export interface Database {
           description: string | null;
           added_by: string;
           created_at: string;
+          is_current: boolean;
         };
         Insert: {
           id?: string;
@@ -50,6 +51,7 @@ export interface Database {
           description?: string | null;
           added_by: string;
           created_at?: string;
+          is_current?: boolean;
         };
         Update: {
           id?: string;
@@ -60,6 +62,7 @@ export interface Database {
           description?: string | null;
           added_by?: string;
           created_at?: string;
+          is_current?: boolean;
         };
         Relationships: [
           {
