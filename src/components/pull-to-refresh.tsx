@@ -105,11 +105,11 @@ export function PullToRefresh({ children }: PullToRefreshProps) {
       {/* Pull indicator - fixed position below header (PWA only) */}
       {isPWA && (
         <div
-          className="fixed left-1/2 -translate-x-1/2 pointer-events-none z-50 transition-all duration-200"
+          className="fixed inset-x-0 flex justify-center pointer-events-none z-50 transition-all duration-200"
           style={{
-            top: 56 + 16, // header height + padding
+            top: 16,
             opacity: showIndicator ? 1 : 0,
-            transform: `translateX(-50%) scale(${showIndicator ? 1 : 0.5})`,
+            transform: `scale(${showIndicator ? 1 : 0.5})`,
           }}
         >
           <div
