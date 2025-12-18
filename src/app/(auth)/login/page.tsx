@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { signInWithMagicLink } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,17 +16,13 @@ import {
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
-    setIsLoading(true);
     setError(null);
-
     const result = await signInWithMagicLink(formData);
 
     if (result?.error) {
       setError(result.error);
-      setIsLoading(false);
     }
   }
 
@@ -47,59 +44,77 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-zinc-300">
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="you@example.com"
-                required
-                disabled={isLoading}
-                autoComplete="email"
-                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="displayName" className="text-zinc-300">
-                Display Name{" "}
-                <span className="text-zinc-500">(optional, for new accounts)</span>
-              </Label>
-              <Input
-                id="displayName"
-                name="displayName"
-                type="text"
-                placeholder="Your name"
-                disabled={isLoading}
-                autoComplete="name"
-                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
-              />
-            </div>
+            <FormFields />
             {error && (
               <p className="text-sm text-red-400 bg-red-950/50 border border-red-900 rounded-md p-3">
                 {error}
               </p>
             )}
-            <Button
-              type="submit"
-              className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <LoadingSpinner />
-                  Sending magic link...
-                </span>
-              ) : (
-                "Send Magic Link"
-              )}
-            </Button>
+            <SubmitButton />
           </form>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function FormFields() {
+  const { pending } = useFormStatus();
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-zinc-300">
+          Email
+        </Label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          required
+          disabled={pending}
+          autoComplete="email"
+          className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="displayName" className="text-zinc-300">
+          Display Name{" "}
+          <span className="text-zinc-500">(optional, for new accounts)</span>
+        </Label>
+        <Input
+          id="displayName"
+          name="displayName"
+          type="text"
+          placeholder="Your name"
+          disabled={pending}
+          autoComplete="name"
+          className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500 disabled:opacity-50"
+        />
+      </div>
+    </>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium disabled:opacity-50"
+      disabled={pending}
+    >
+      {pending ? (
+        <span className="flex items-center gap-2">
+          <LoadingSpinner />
+          Sending magic link...
+        </span>
+      ) : (
+        "Send Magic Link"
+      )}
+    </Button>
   );
 }
 
@@ -151,4 +166,3 @@ function LoadingSpinner() {
     </svg>
   );
 }
-
