@@ -16,7 +16,7 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "The Navajo Movie Talkers",
   description: "A Film Discussion Club - Track and rate movies together",
-  metadataBase: new URL("https://movie-club-mattmcguins-projects.vercel.app"),
+  metadataBase: new URL("https://movie-club-red.vercel.app"),
   openGraph: {
     title: "The Navajo Movie Talkers",
     description: "A Film Discussion Club - Track and rate movies together",
