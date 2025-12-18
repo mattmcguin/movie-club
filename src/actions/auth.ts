@@ -1,0 +1,85 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import type { Profile } from "@/lib/types/database";
+
+export async function signInWithMagicLink(formData: FormData) {
+  const email = formData.get("email") as string;
+  const displayName = formData.get("displayName") as string | null;
+
+  if (!email) {
+    return { error: "Email is required" };
+  }
+
+  const supabase = await createClient();
+  const headersList = await headers();
+  const origin = headersList.get("origin") || "";
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+      data: displayName ? { display_name: displayName } : undefined,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/verify");
+}
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/login");
+}
+
+export async function getUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
+
+export async function getProfile(userId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+  return data as Profile | null;
+}
+
+export async function updateProfile(formData: FormData) {
+  const displayName = formData.get("displayName") as string;
+
+  if (!displayName) {
+    return { error: "Display name is required" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ display_name: displayName } as Partial<Profile>)
+    .eq("id", user.id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
