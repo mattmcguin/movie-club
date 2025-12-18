@@ -39,10 +39,10 @@ export default function LoginPage() {
             <FilmIcon className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-zinc-100">
-            Movie Club
+            Navajo Movie Talkers
           </CardTitle>
           <CardDescription className="text-zinc-400">
-            Sign in with a magic link to track and rate movies with your friends
+            A Film Discussion Club - Sign in with a magic link
           </CardDescription>
         </CardHeader>
         <CardContent>

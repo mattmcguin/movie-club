@@ -25,7 +25,7 @@ export function Header({ profile }: HeaderProps) {
           <div className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
             <FilmIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
           </div>
-          <span className="text-base md:text-lg font-bold text-zinc-100">Movie Club</span>
+          <span className="text-base md:text-lg font-bold text-zinc-100">Navajo Movie Talkers</span>
         </Link>
 
         {profile && (
