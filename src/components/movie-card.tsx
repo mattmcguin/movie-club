@@ -97,7 +97,7 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
       <div className="flex gap-4 p-4">
         <MovieInfoDialog movie={movie}>
           {movie.poster_url ? (
-            <button className="relative h-32 w-22 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+            <button className="relative h-32 w-22 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all cursor-pointer">
               <Image
                 src={movie.poster_url}
                 alt={movie.title}
@@ -107,7 +107,7 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
               />
             </button>
           ) : (
-            <button className="flex h-32 w-22 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all">
+            <button className="flex h-32 w-22 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-800 hover:ring-2 hover:ring-amber-500/50 transition-all cursor-pointer">
               <FilmIcon className="h-8 w-8 text-zinc-600" />
             </button>
           )}
@@ -209,7 +209,7 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
             <>
               <button
                 onClick={() => setShowAllRatings(!showAllRatings)}
-                className="w-full flex items-center justify-between p-4 text-sm text-zinc-400 hover:bg-zinc-800/50 transition-colors"
+                className="w-full flex items-center justify-between p-4 text-sm text-zinc-400 hover:bg-zinc-800/50 transition-colors cursor-pointer"
               >
                 <span>See {otherProfiles.length} other review{otherProfiles.length !== 1 ? "s" : ""}</span>
                 <ChevronIcon className={`h-4 w-4 transition-transform ${showAllRatings ? "rotate-180" : ""}`} />

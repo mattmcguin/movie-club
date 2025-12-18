@@ -39,7 +39,7 @@ export default function LoginPage() {
             Navajo Movie Talkers
           </CardTitle>
           <CardDescription className="text-zinc-400">
-            A Film Discussion Club - Sign in with a magic link
+            A Film Discussion Club - Sign in below
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,8 +80,7 @@ function FormFields() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="displayName" className="text-zinc-300">
-          Display Name{" "}
-          <span className="text-zinc-500">(optional, for new accounts)</span>
+          Display Name <span className="text-zinc-500 text-xs">(optional)</span>
         </Label>
         <Input
           id="displayName"
