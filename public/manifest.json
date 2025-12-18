@@ -3,6 +3,8 @@
   "short_name": "NMT",
   "description": "A Film Discussion Club - Track and rate movies together",
   "start_url": "/",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
   "background_color": "#09090b",
   "theme_color": "#f59e0b",
