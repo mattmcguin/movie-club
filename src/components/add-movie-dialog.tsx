@@ -134,7 +134,7 @@ export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
           Add Movie
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">Add a Movie</DialogTitle>
           <DialogDescription className="text-zinc-400">

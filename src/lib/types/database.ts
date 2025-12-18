@@ -79,7 +79,7 @@ export interface Database {
           movie_id: string;
           user_id: string;
           watched: boolean;
-          score: number | null;
+          score: number | null; // Decimal score 0.0-10.0
           review: string | null;
           updated_at: string;
         };
@@ -88,7 +88,7 @@ export interface Database {
           movie_id: string;
           user_id: string;
           watched?: boolean;
-          score?: number | null;
+          score?: number | null; // Decimal score 0.0-10.0
           review?: string | null;
           updated_at?: string;
         };
@@ -97,7 +97,7 @@ export interface Database {
           movie_id?: string;
           user_id?: string;
           watched?: boolean;
-          score?: number | null;
+          score?: number | null; // Decimal score 0.0-10.0
           review?: string | null;
           updated_at?: string;
         };

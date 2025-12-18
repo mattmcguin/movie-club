@@ -190,37 +190,33 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
               </button>
 
               {showAllRatings && (
-                <div className="px-4 pb-4 space-y-4">
+                <div className="px-4 pb-4 space-y-3">
                   {otherProfiles.map((profile) => {
                     const rating = movie.ratings.find((r) => r.user_id === profile.id) ?? null;
                     return (
-                      <div key={profile.id} className="flex items-start gap-3">
-                        <Avatar className="h-8 w-8 border border-zinc-700 flex-shrink-0">
-                          <AvatarFallback className="bg-gradient-to-br from-zinc-600 to-zinc-700 text-white text-xs">
-                            {getInitials(profile.display_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-zinc-300 truncate">
+                      <div key={profile.id}>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6 border border-zinc-700 flex-shrink-0">
+                            <AvatarFallback className="bg-gradient-to-br from-zinc-600 to-zinc-700 text-white text-[10px]">
+                              {getInitials(profile.display_name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm text-zinc-300 truncate flex-1">
                             {profile.display_name}
-                          </p>
-                          <div className="flex items-center gap-3 mt-1">
-                            {rating?.watched ? (
-                              <>
-                                <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400">
-                                  {rating.score}/10
-                                </Badge>
-                              </>
-                            ) : (
-                              <span className="text-xs text-zinc-500">Not reviewed</span>
-                            )}
-                          </div>
-                          {rating?.review && (
-                            <p className="text-xs text-zinc-400 mt-2 line-clamp-3 italic">
-                              &ldquo;{rating.review}&rdquo;
-                            </p>
+                          </span>
+                          {rating?.watched ? (
+                            <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400 flex-shrink-0">
+                              {rating.score?.toFixed(1)}/10
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-zinc-500 flex-shrink-0">—</span>
                           )}
                         </div>
+                        {rating?.review && (
+                          <p className="text-xs text-zinc-400 mt-1 ml-8 italic">
+                            &ldquo;{rating.review}&rdquo;
+                          </p>
+                        )}
                       </div>
                     );
                   })}

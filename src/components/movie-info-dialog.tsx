@@ -29,7 +29,7 @@ export function MovieInfoDialog({ movie, children }: MovieInfoDialogProps) {
           </button>
         )}
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 sm:max-w-lg mx-4 sm:mx-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-zinc-100 text-xl">
             {movie.title}

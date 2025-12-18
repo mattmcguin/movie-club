@@ -303,7 +303,7 @@ function DesktopRatingCell({
       {hasReviewed ? (
         <>
           <Badge variant="outline" className="text-xs border-emerald-500/50 text-emerald-400">
-            {rating?.score}/10
+            {rating?.score?.toFixed(1)}/10
           </Badge>
           {rating?.review && (
             <TooltipProvider>

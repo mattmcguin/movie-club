@@ -67,7 +67,7 @@ export function ReviewDialog({
             <>
               <CheckIcon className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
               <span className={isMobile ? "text-sm font-medium" : "text-xs"}>
-                {existingRating?.score}/10
+                {existingRating?.score?.toFixed(1)}/10
               </span>
               {existingRating?.review && (
                 <MessageIcon className={isMobile ? "h-4 w-4 ml-1" : "h-3 w-3 ml-1"} />
@@ -81,7 +81,7 @@ export function ReviewDialog({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 sm:max-w-md mx-4 sm:mx-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">
             {hasReviewed ? "Update Review" : "Review Movie"}
@@ -92,23 +92,23 @@ export function ReviewDialog({
         <div className="space-y-6 pt-4">
           {/* Score Selector */}
           <div className="space-y-3">
-            <Label className="text-zinc-300 text-base">
-              Score <span className="text-amber-400">*</span>
-            </Label>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min="0"
-                max="10"
-                value={score}
-                onChange={(e) => setScore(parseInt(e.target.value, 10))}
-                className="flex-1 h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
-              />
-              <div className="flex items-center justify-center w-16 h-12 rounded-lg bg-zinc-800 border border-zinc-700">
-                <span className="text-xl font-bold text-amber-400">{score}</span>
-                <span className="text-sm text-zinc-500">/10</span>
-              </div>
+            <div className="flex items-center justify-between">
+              <Label className="text-zinc-300 text-base">
+                Score <span className="text-amber-400">*</span>
+              </Label>
+              <span className="text-xl font-bold text-amber-400">
+                {score.toFixed(1)}<span className="text-sm text-zinc-500 font-normal">/10</span>
+              </span>
             </div>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              step="0.1"
+              value={score}
+              onChange={(e) => setScore(parseFloat(e.target.value))}
+              className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+            />
             <div className="flex justify-between text-xs text-zinc-500 px-1">
               <span>0</span>
               <span>5</span>
