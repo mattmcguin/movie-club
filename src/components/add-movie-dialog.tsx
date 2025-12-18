@@ -152,7 +152,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
           Add Movie
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">Add a Movie</DialogTitle>
           <DialogDescription className="text-zinc-400">
@@ -161,7 +161,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
         </DialogHeader>
 
         {/* Mode Toggle */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 flex-shrink-0">
           <Button
             variant={mode === "search" ? "default" : "outline"}
             size="sm"
@@ -180,6 +180,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
           </Button>
         </div>
 
+        <div className="flex-1 overflow-y-auto min-h-0">
         {mode === "search" ? (
           <div className="space-y-4">
             {/* Search Input */}
@@ -201,7 +202,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
 
             {/* Search Results */}
             {searchResults.length > 0 && (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {searchResults.map((movie) => (
                   <button
                     key={movie.id}
@@ -224,7 +225,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-zinc-100 truncate">{movie.title}</p>
+                      <p className="font-medium text-zinc-100">{movie.title}</p>
                       <p className="text-sm text-zinc-500">
                         {getYear(movie.release_date) ?? "Unknown year"}
                       </p>
@@ -349,6 +350,7 @@ export function AddMovieDialog({ fullWidth = false, compact = false }: AddMovieD
             </Button>
           </div>
         )}
+        </div>
       </DialogContent>
     </Dialog>
   );
