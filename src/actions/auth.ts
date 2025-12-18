@@ -3,9 +3,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { Profile } from "@/lib/types/database";
+import { User } from "@supabase/supabase-js";
 
 // Use environment variable or fall back to production domain
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://navajomovietalkers.com";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://navajomovietalkers.com";
 
 export async function signInWithMagicLink(formData: FormData) {
   const email = formData.get("email") as string;
@@ -46,10 +48,13 @@ export async function getUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return user;
+  if (user) {
+    return user;
+  }
+  redirect("/login");
 }
 
-export async function getProfile(userId: string) {
+export async function getProfileWithUserId(userId: string) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
@@ -57,6 +62,20 @@ export async function getProfile(userId: string) {
     .eq("id", userId)
     .single();
   return data as Profile | null;
+}
+
+export async function getUserProfile() {
+  const supabase = await createClient();
+  const user = await getUser();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+  if (data) {
+    return { user, profile: data } as { user: User; profile: Profile };
+  }
+  return { user, profile: null };
 }
 
 export async function updateProfile(formData: FormData) {
