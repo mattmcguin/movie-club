@@ -33,7 +33,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-transparent to-transparent" />
       
-      <Card className="w-full max-w-md relative bg-zinc-900/80 border-zinc-800 backdrop-blur-sm">
+      <Card className="w-full max-w-md relative bg-zinc-900/80 border-zinc-800 backdrop-blur-sm mx-4 sm:mx-0">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600">
             <FilmIcon className="h-8 w-8 text-white" />
@@ -57,7 +57,8 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@example.com"
                 required
-                className="bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
+                autoComplete="email"
+                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
               />
             </div>
             <div className="space-y-2">
@@ -70,7 +71,8 @@ export default function LoginPage() {
                 name="displayName"
                 type="text"
                 placeholder="Your name"
-                className="bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
+                autoComplete="name"
+                className="h-12 text-base bg-zinc-800/50 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-amber-500"
               />
             </div>
             {error && (
@@ -80,7 +82,7 @@ export default function LoginPage() {
             )}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium"
+              className="w-full h-12 text-base bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium"
               disabled={isLoading}
             >
               {isLoading ? (

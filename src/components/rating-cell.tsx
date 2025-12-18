@@ -23,9 +23,10 @@ interface RatingCellProps {
   movieId: string;
   rating: (MovieRating & { profile: Profile }) | null;
   isCurrentUser: boolean;
+  variant?: "default" | "mobile";
 }
 
-export function RatingCell({ movieId, rating, isCurrentUser }: RatingCellProps) {
+export function RatingCell({ movieId, rating, isCurrentUser, variant = "default" }: RatingCellProps) {
   const [isPending, startTransition] = useTransition();
   const [localWatched, setLocalWatched] = useState(rating?.watched ?? false);
   const [localScore, setLocalScore] = useState<number | null>(rating?.score ?? null);
@@ -55,6 +56,75 @@ export function RatingCell({ movieId, rating, isCurrentUser }: RatingCellProps) 
     });
   };
 
+  // Mobile variant - horizontal layout with larger touch targets
+  if (variant === "mobile") {
+    return (
+      <div className="flex items-center gap-3 flex-wrap">
+        {/* Watched Toggle */}
+        <Button
+          variant="ghost"
+          onClick={handleToggleWatched}
+          disabled={!isCurrentUser || isPending}
+          className={`h-11 px-4 rounded-full transition-all gap-2 ${
+            localWatched
+              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+              : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+          } ${!isCurrentUser ? "cursor-default opacity-70" : ""}`}
+        >
+          {localWatched ? (
+            <>
+              <EyeIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">Watched</span>
+            </>
+          ) : (
+            <>
+              <EyeOffIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">Not watched</span>
+            </>
+          )}
+        </Button>
+
+        {/* Score Selector */}
+        {isCurrentUser ? (
+          <Select
+            value={localScore?.toString() ?? "none"}
+            onValueChange={handleScoreChange}
+            disabled={isPending}
+          >
+            <SelectTrigger className="h-11 w-24 text-sm bg-zinc-800 border-zinc-700 text-zinc-300 rounded-full">
+              <SelectValue placeholder="Score" />
+            </SelectTrigger>
+            <SelectContent className="bg-zinc-900 border-zinc-700">
+              <SelectItem value="none" className="text-zinc-400">
+                No score
+              </SelectItem>
+              {[...Array(11)].map((_, i) => (
+                <SelectItem key={i} value={i.toString()} className="text-zinc-300">
+                  {i}/10
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          localScore !== null && (
+            <span className="text-sm text-zinc-400 h-11 flex items-center px-4 bg-zinc-800 rounded-full">
+              {localScore}/10
+            </span>
+          )
+        )}
+
+        {/* Review */}
+        <ExpandableReview
+          movieId={movieId}
+          review={rating?.review ?? null}
+          isCurrentUser={isCurrentUser}
+          variant="mobile"
+        />
+      </div>
+    );
+  }
+
+  // Default desktop variant - vertical layout
   return (
     <div className="flex flex-col items-center gap-2 p-2 min-w-[120px]">
       {/* Watched Toggle */}
@@ -159,4 +229,3 @@ function EyeOffIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-

@@ -9,17 +9,25 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ExpandableReviewProps {
   movieId: string;
   review: string | null;
   isCurrentUser: boolean;
+  variant?: "default" | "mobile";
 }
 
 export function ExpandableReview({
   movieId,
   review,
   isCurrentUser,
+  variant = "default",
 }: ExpandableReviewProps) {
   const [isPending, startTransition] = useTransition();
   const [localReview, setLocalReview] = useState(review ?? "");
@@ -37,9 +45,69 @@ export function ExpandableReview({
   const hasReview = review && review.trim().length > 0;
 
   if (!isCurrentUser && !hasReview) {
-    return <span className="text-xs text-zinc-600">-</span>;
+    return variant === "mobile" ? null : <span className="text-xs text-zinc-600">-</span>;
   }
 
+  // Mobile variant uses Dialog (full-screen on mobile)
+  if (variant === "mobile") {
+    return (
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Button
+          variant="ghost"
+          onClick={() => setIsOpen(true)}
+          className={`h-11 px-4 rounded-full gap-2 ${
+            hasReview
+              ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+              : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+          }`}
+        >
+          <MessageIcon className="h-5 w-5" />
+          <span className="text-sm font-medium">
+            {hasReview ? "Review" : "Add review"}
+          </span>
+        </Button>
+        <DialogContent className="bg-zinc-900 border-zinc-700 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-100">
+              {isCurrentUser ? "Your Review" : "Review"}
+            </DialogTitle>
+          </DialogHeader>
+          {isCurrentUser ? (
+            <div className="space-y-4">
+              <Textarea
+                value={localReview}
+                onChange={(e) => setLocalReview(e.target.value)}
+                placeholder="Write your thoughts about this movie..."
+                className="min-h-[150px] bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 resize-none text-base"
+              />
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1 h-12 border-zinc-700 text-zinc-400 hover:bg-zinc-800"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={isPending}
+                  className="flex-1 h-12 bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  {isPending ? "Saving..." : "Save Review"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-base text-zinc-300 whitespace-pre-wrap py-4">
+              {review}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Default desktop variant uses Popover
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
@@ -140,4 +208,3 @@ function PlusIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-

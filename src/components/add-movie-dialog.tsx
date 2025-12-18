@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-export function AddMovieDialog() {
+interface AddMovieDialogProps {
+  fullWidth?: boolean;
+}
+
+export function AddMovieDialog({ fullWidth = false }: AddMovieDialogProps) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"search" | "manual">("search");
   const [searchQuery, setSearchQuery] = useState("");
@@ -121,12 +125,16 @@ export function AddMovieDialog() {
       if (!newOpen) resetState();
     }}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white">
-          <PlusIcon className="mr-2 h-4 w-4" />
+        <Button 
+          className={`bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white ${
+            fullWidth ? "w-full h-12 text-base" : ""
+          }`}
+        >
+          <PlusIcon className={`mr-2 ${fullWidth ? "h-5 w-5" : "h-4 w-4"}`} />
           Add Movie
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-700 max-w-lg max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle className="text-zinc-100">Add a Movie</DialogTitle>
           <DialogDescription className="text-zinc-400">

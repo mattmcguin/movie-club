@@ -20,12 +20,12 @@ interface HeaderProps {
 export function Header({ profile }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
-            <FilmIcon className="h-5 w-5 text-white" />
+      <div className="container mx-auto flex h-14 md:h-16 items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-2 md:gap-3">
+          <div className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600">
+            <FilmIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
           </div>
-          <span className="text-lg font-bold text-zinc-100">Movie Club</span>
+          <span className="text-base md:text-lg font-bold text-zinc-100">Movie Club</span>
         </Link>
 
         {profile && (
@@ -33,27 +33,28 @@ export function Header({ profile }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"
+                size="sm"
+                className="flex items-center gap-2 text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 h-10 px-2 md:px-3"
               >
-                <Avatar className="h-7 w-7 border border-zinc-700">
+                <Avatar className="h-8 w-8 border border-zinc-700">
                   <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs">
                     {getInitials(profile.display_name)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm">{profile.display_name}</span>
+                <span className="text-sm hidden sm:inline">{profile.display_name}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-zinc-900 border-zinc-700"
+              className="bg-zinc-900 border-zinc-700 min-w-[180px]"
             >
-              <DropdownMenuItem className="text-zinc-400 focus:text-zinc-400 focus:bg-transparent cursor-default">
-                <span className="text-xs">{profile.display_name}</span>
+              <DropdownMenuItem className="text-zinc-400 focus:text-zinc-400 focus:bg-transparent cursor-default sm:hidden">
+                <span className="text-sm font-medium">{profile.display_name}</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-zinc-800" />
+              <DropdownMenuSeparator className="bg-zinc-800 sm:hidden" />
               <DropdownMenuItem
                 onClick={() => signOut()}
-                className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800 cursor-pointer"
+                className="text-zinc-300 focus:text-zinc-100 focus:bg-zinc-800 cursor-pointer h-11"
               >
                 <LogOutIcon className="mr-2 h-4 w-4" />
                 Sign out
@@ -117,4 +118,3 @@ function LogOutIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
