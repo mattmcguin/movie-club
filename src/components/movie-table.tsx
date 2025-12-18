@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { getScoreColor } from "@/lib/utils";
 import type { Profile, Movie, MovieRating } from "@/lib/types/database";
 
 type MovieWithRatings = Movie & {
@@ -302,9 +303,12 @@ function DesktopRatingCell({
     <div className="flex flex-col items-center gap-2 p-2">
       {hasReviewed ? (
         <>
-          <Badge variant="outline" className="text-xs border-emerald-500/50 text-emerald-400">
-            {rating?.score?.toFixed(1)}/10
-          </Badge>
+          <span 
+            className="text-lg font-bold"
+            style={{ color: getScoreColor(rating?.score ?? 0) }}
+          >
+            {rating?.score?.toFixed(1)}
+          </span>
           {rating?.review && (
             <TooltipProvider>
               <Tooltip>

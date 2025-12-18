@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { getScoreColor } from "@/lib/utils";
 import type { MovieRating } from "@/lib/types/database";
 
 interface ReviewDialogProps {
@@ -35,6 +36,15 @@ export function ReviewDialog({
 
   const hasReviewed = existingRating?.watched ?? false;
 
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      // Reset to existing values when opening
+      setScore(existingRating?.score ?? 5);
+      setReview(existingRating?.review ?? "");
+    }
+    setIsOpen(open);
+  };
+
   const handleSubmit = () => {
     startTransition(async () => {
       const result = await submitReview(movieId, score, review || null);
@@ -50,7 +60,7 @@ export function ReviewDialog({
   const isMobile = variant === "mobile";
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           className={`${
@@ -66,8 +76,11 @@ export function ReviewDialog({
           {hasReviewed ? (
             <>
               <CheckIcon className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
-              <span className={isMobile ? "text-sm font-medium" : "text-xs"}>
-                {existingRating?.score?.toFixed(1)}/10
+              <span 
+                className={isMobile ? "text-base font-bold" : "text-sm font-bold"}
+                style={{ color: getScoreColor(existingRating?.score ?? 0) }}
+              >
+                {existingRating?.score?.toFixed(1)}
               </span>
               {existingRating?.review && (
                 <MessageIcon className={isMobile ? "h-4 w-4 ml-1" : "h-3 w-3 ml-1"} />
@@ -96,8 +109,11 @@ export function ReviewDialog({
               <Label className="text-zinc-300 text-base">
                 Score <span className="text-amber-400">*</span>
               </Label>
-              <span className="text-xl font-bold text-amber-400">
-                {score.toFixed(1)}<span className="text-sm text-zinc-500 font-normal">/10</span>
+              <span 
+                className="text-2xl font-bold transition-colors"
+                style={{ color: getScoreColor(score) }}
+              >
+                {score.toFixed(1)}
               </span>
             </div>
             <input

@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { getScoreColor } from "@/lib/utils";
 import type { Profile, Movie, MovieRating } from "@/lib/types/database";
 
 type MovieWithRatings = Movie & {
@@ -205,9 +206,12 @@ export function MovieCard({ movie, profiles, currentUserId }: MovieCardProps) {
                             {profile.display_name}
                           </span>
                           {rating?.watched ? (
-                            <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400 flex-shrink-0">
-                              {rating.score?.toFixed(1)}/10
-                            </Badge>
+                            <span 
+                              className="text-sm font-bold flex-shrink-0"
+                              style={{ color: getScoreColor(rating.score ?? 0) }}
+                            >
+                              {rating.score?.toFixed(1)}
+                            </span>
                           ) : (
                             <span className="text-xs text-zinc-500 flex-shrink-0">—</span>
                           )}
