@@ -46,13 +46,15 @@ export function ReviewDialog({
   };
 
   const handleSubmit = () => {
+    // Close immediately for optimistic UX
+    setIsOpen(false);
+    
     startTransition(async () => {
       const result = await submitReview(movieId, score, review || null);
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success("Review submitted!");
-        setIsOpen(false);
       }
     });
   };

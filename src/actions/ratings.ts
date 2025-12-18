@@ -23,41 +23,22 @@ export async function submitReview(
     return { error: "Score must be between 0 and 10" };
   }
 
-  // Check if rating exists
-  const { data } = await supabase
+  // Upsert in a single operation (uses unique constraint on movie_id, user_id)
+  const { error } = await supabase
     .from("movie_ratings")
-    .select("*")
-    .eq("movie_id", movieId)
-    .eq("user_id", user.id)
-    .single();
-
-  const existingRating = data as MovieRating | null;
-
-  if (existingRating) {
-    const { error } = await supabase
-      .from("movie_ratings")
-      .update({
+    .upsert(
+      {
+        movie_id: movieId,
+        user_id: user.id,
         watched: true,
         score,
         review: review || null,
-      })
-      .eq("id", existingRating.id);
+      },
+      { onConflict: "movie_id,user_id" }
+    );
 
-    if (error) {
-      return { error: error.message };
-    }
-  } else {
-    const { error } = await supabase.from("movie_ratings").insert({
-      movie_id: movieId,
-      user_id: user.id,
-      watched: true,
-      score,
-      review: review || null,
-    });
-
-    if (error) {
-      return { error: error.message };
-    }
+  if (error) {
+    return { error: error.message };
   }
 
   revalidatePath("/");
