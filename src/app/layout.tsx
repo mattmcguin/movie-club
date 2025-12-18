@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
+import { UpdateBanner } from "@/components/update-banner";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -70,6 +71,7 @@ export default function RootLayout({
         {children}
         <Toaster />
         <ServiceWorkerRegistration />
+        <UpdateBanner />
       </body>
     </html>
   );
